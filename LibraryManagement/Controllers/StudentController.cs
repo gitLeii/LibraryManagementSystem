@@ -42,6 +42,11 @@ namespace LibraryManagement.Controllers
             Student? student = await _context.Students.FindAsync(id);
             return View(student);
         }
+        public async Task<IActionResult> Profile(int id)
+        {
+            Student? student = await _context.Students.FindAsync(id);
+            return View(student);
+        }
     }
 }
 

@@ -1,0 +1,41 @@
+﻿@model LibraryManagement.Models.Student
+@{
+    ViewData["Title"] = "Details";
+}
+<h2>Details</h2>
+<div class="row">
+    <div class="col-md-5">
+        <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Faculty)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Faculty)
+        </dd>
+    </dl>
+    </div>
+</div>
+
+@*<td>
+    <a asp-action="Edit" asp-route-id="Model.Id" class="btn btn-light">Edit</a>    
+    <a asp-action="Delete" asp-route-id="Model.Id" class="btn btn-danger">Delete</a> 
+</td>*@
+<br />
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>
+
