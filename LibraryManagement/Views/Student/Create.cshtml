@@ -1,0 +1,41 @@
+﻿@model LibraryManagement.Models.Student
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h3>Fill Your Details</h3>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            @Html.HiddenFor(model => model.Id)
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            
+            @Html.HiddenFor(model => model.Email)
+            <div class="form-group">
+                <label asp-for="Faculty" class="control-label"></label>
+                <select class="form-control" asp-for="Faculty" asp-items="Html.GetEnumSelectList<Faculty>()">
+                <option selected="selected" value="">Please select</option>
+                </select>
+                <span asp-validation-for="Faculty" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Add" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

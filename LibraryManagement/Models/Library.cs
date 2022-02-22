@@ -25,7 +25,8 @@ namespace LibraryManagement.Models
     public enum Status
     {
         Reserved,
-        Issued
+        Issued,
+        Available
     }
     public enum Branch
     {
