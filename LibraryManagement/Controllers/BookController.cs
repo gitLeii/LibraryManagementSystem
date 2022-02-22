@@ -18,12 +18,13 @@ namespace LibraryManagement.Controllers
         {
             return View();
         }
-        [HttpGet]
         public IActionResult GetBooks()
         {
             var bookData = _context.Books.ToList<Book>();
             var jsonData = new { data = bookData };
             return Json(jsonData, new Newtonsoft.Json.JsonSerializerSettings());
+            /*var books = _context.Books.ToList();
+            return new JsonResult(books);*/
         }
         [HttpGet]
         public Book Get(int id)
