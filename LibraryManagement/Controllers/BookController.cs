@@ -18,6 +18,7 @@ namespace LibraryManagement.Controllers
         {
             return View();
         }
+        [HttpGet]
         public IActionResult GetBooks()
         {
             var bookData = _context.Books.ToList<Book>();
@@ -30,6 +31,12 @@ namespace LibraryManagement.Controllers
         public Book Get(int id)
         {
             return _bookService.GetById(id);
+        }
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var bookData = _context.Books.Find(id);
+            return View(bookData);
         }
         [HttpGet]
         public IActionResult Create()

@@ -1,11 +1,13 @@
 ﻿$(document).ready(function () {
     $('#booksDatatable').dataTable({
-        
+        "processing": true,
+        "serverSide": true,
+        "filter": true,
+
         "ajax": {
             "url": "/Book/GetBooks",
             "type": "GET",
             "datatype": "json"
-
         },
         "columnDefs": [{
             "targets": [0],
@@ -13,12 +15,12 @@
             "searchable": false
         }],
         "columns": [
-            { title: "BookId", data: "bookId", autoWidth: true },
-            { title: "Title", data: "title", autoWidth: true },
-            { title: "Author", data: "author", autoWidth: true },
-            { title: "Branch", data: "branch", autoWidth: true },
+            { "data": "BookId", "name": "BookId", "autoWidth": true },
+            { "data": "Title", "name": "Title", "autoWidth": true },
+            { "data": "Author", "name": "Author", "autoWidth": true },
+            { "data": "Branch", "name": "Branch", "autoWidth": true },
             {
-                "render": function (data, row) { return "<a href='#' class='btn btn-danger' onclick=DeleteBook('" + row.BookId + "'); >Delete</a>"; }
+                "render": function (data, row) { return "<a href='#' class='btn btn-danger' onclick=DeleteCustomer('" + row.BookId + "'); >Delete</a>"; }
             },
         ],
     });
