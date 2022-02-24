@@ -51,12 +51,13 @@ namespace LibraryManagement.Models
     }
     public class Issue
     {
+        [Key]
         public int IssueId { get; set; }
         public DateTime IssueDate { get; set; }
         public Status Status { get; set; }
         public int StudentId { get; set; }
         public int BookId { get; set; }
-        public virtual Book Book { get; set; }
-        public virtual Student Student { get; set; }
+        public virtual Book? Book { get; set; }
+        public virtual Student? Student { get; set; }
     }
 }
