@@ -98,9 +98,11 @@ namespace LibraryManagement.Controllers
             int Id = query.FirstOrDefault().IssueId;
             int stuID = query.FirstOrDefault().StudentId;
             var issue = _context.Issues.Find(Id);
-            _context.Issues.Remove(issue);
-            _context.SaveChanges();
-            
+            if(issue != null)
+            {
+                _context.Issues.Remove(issue);
+                _context.SaveChanges();
+            }               
             return RedirectToAction("Profile", "Student", new { id = stuID });
         }
         protected override void Dispose(bool disposing)
