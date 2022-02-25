@@ -1,10 +1,12 @@
 ﻿using LibraryManagement.Data;
 using LibraryManagement.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagement.Controllers
 {
+    [Authorize]
     public class StudentController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -37,10 +39,18 @@ namespace LibraryManagement.Controllers
             }
             return View(student);
         }
-        public async Task<IActionResult> Details(int id)
+        public IActionResult Update(int id)
         {
-            Student? student = await _context.Students.FindAsync(id);
+            Student student = _context.Students.Find(id);
             return View(student);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update(Student student)
+        {
+            _context.Students.Update(student);
+            _context.SaveChanges();
+            return RedirectToAction("Profile", new { id = student.Id });
         }
         public async Task<IActionResult> Profile(int id)
         {

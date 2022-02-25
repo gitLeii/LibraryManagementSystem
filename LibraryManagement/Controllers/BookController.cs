@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace LibraryManagement.Controllers
 {
+    [Authorize]
     public class BookController : Controller
     {
         IBookService _bookService = null;
@@ -14,26 +15,14 @@ namespace LibraryManagement.Controllers
             _bookService = bookService;
             _context = context;
         }
-        [HttpGet]
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Admin");
         }
         [HttpGet]
-        public IActionResult GetBooks()
+        public IActionResult Details(int id, string message = "")
         {
-            var bookData = _context.Books.ToList<Book>();
-            var jsonData = new { data = bookData };
-            return Json(jsonData, new Newtonsoft.Json.JsonSerializerSettings());
-        }
-        [HttpGet]
-        public Book Get(int id)
-        {
-            return _bookService.GetById(id);
-        }
-        [HttpGet]
-        public IActionResult Details(int id)
-        {
+            ViewBag.Message = message;
             if (User.Identity.IsAuthenticated)
             {
                 var email = User.Identity.Name;
@@ -44,35 +33,6 @@ namespace LibraryManagement.Controllers
             }
             var bookData = _context.Books.Find(id);
             return View(bookData);
-        }
-        [Authorize]
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Book book)
-        {
-            _bookService.Add(book);
-            return RedirectToAction(nameof(Index));
-        }
-        [HttpGet]
-        public IActionResult Update(int id)
-        {
-            return View();
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public void Update(Book book)
-        {
-            _bookService.Update(book);
-        }
-        [HttpDelete]
-        public string Delete(int id)
-        {
-            return _bookService.Delete(id);
         }
         [HttpPost]
         public IActionResult Issue(Issue issue)
@@ -85,12 +45,21 @@ namespace LibraryManagement.Controllers
                             select x.Id;
                 issue.StudentId = query.FirstOrDefault();
                 issue.IssueDate = DateTime.Now;
-                if(ModelState.IsValid)
+                var checkIssue = from x in _context.Issues
+                                 where issue.StudentId == x.StudentId
+                                 && issue.BookId == x.BookId
+                                 select x;
+                if (checkIssue != null)
+                {
+                    return RedirectToAction("Details", new { id = issue.BookId, message = "This Book is already Issued" });
+                }
+                if (ModelState.IsValid)
                 {
                     _context.Issues.Add(issue);
                     _context.SaveChanges();
                 }
-                return RedirectToAction("Details", new { id = issue.BookId });
+                return RedirectToAction("Profile", "Student", new { id = issue.StudentId });                              
+                
             }
             
             return Redirect("../Identity/Account/Login");

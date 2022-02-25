@@ -36,7 +36,12 @@
         </div>
     </form>*@
     <a asp-action="Update" asp-route-id="@Model.BookId" class="btn btn-light mx-3">Edit</a>    
-    <a asp-action="Delete" asp-route-id="@Model.BookId" class="btn btn-danger">Delete</a> 
+    <form asp-action="Delete" asp-route-id="@Model.BookId" method="post">
+        <div class="form-group">            
+            @Html.HiddenFor(model => model.BookId)
+            <input type="submit" value="Delete" class="btn btn-danger" />
+        </div>
+    </form> 
 
 </td>
 <br />

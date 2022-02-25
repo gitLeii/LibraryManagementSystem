@@ -40,6 +40,12 @@
 
 </td>
 <br />
+<br />
+@if (ViewBag.Message != "")
+    {
+        <p class="alert alert-danger alert-dismissible">@ViewBag.Message</p>
+    }
+<br />
 <p>
     <a href="/">Back to list</a>
 </p>

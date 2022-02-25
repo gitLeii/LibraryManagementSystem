@@ -124,7 +124,7 @@ namespace LibraryManagement.Areas.Identity.Pages.Account
                     _logger.LogInformation("User logged in.");
                     if (Input.Email == "admin@admin.com")
                     {
-                        return RedirectToAction("Index", "Admin");
+                        return Redirect("/");
                     }
                     return RedirectToAction("Profile","Student", new {id = id});
                 }
