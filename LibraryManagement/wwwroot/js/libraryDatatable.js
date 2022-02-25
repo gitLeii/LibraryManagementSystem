@@ -5,7 +5,7 @@
         "filter": true,
 
         "ajax": {
-            "url": "/Book/GetBooks",
+            "url": "/Admin/GetBooks",
             "type": "GET",
             "datatype": "json"
         },

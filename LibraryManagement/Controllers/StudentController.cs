@@ -54,9 +54,16 @@ namespace LibraryManagement.Controllers
         }
         public async Task<IActionResult> Profile(int id)
         {
+            var email = User.Identity.Name;
+            if (email == "admin@admin.com")
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+
             var issued = from x in _context.Issues
                          where x.StudentId == id
-                         select x;       
+                         select x;  
+            
             ViewBag.Issued = issued.ToList();
             Student ? student = await _context.Students.FindAsync(id);
             return View(student);
