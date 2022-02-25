@@ -52,14 +52,46 @@ namespace LibraryManagement.Controllers
             _context.SaveChanges();
             return RedirectToAction("Profile", new { id = student.Id });
         }
-        public async Task<IActionResult> Profile(int id)
+        public List<string> CheckState(int id)
         {
+            var query = from x in _context.Issues
+                        where id == x.StudentId
+                        select x;
+            var checkIssue = query.ToList();
+            List<string> message = new List<string>();
+            foreach (var x in checkIssue)
+            {
+                DateTime d1 = DateTime.Now; 
+                DateTime d2 = x.IssueDate;
+                int checkDate = DateTime.Compare(d1, d2);
+
+                if (checkDate >= 0)
+                {
+                    Book? book = _context.Books.Find(x.BookId);
+                    if (checkDate >= 15)
+                    {
+                        Student? student = _context.Students.Find(x.StudentId);
+                        student.Fine = 15;
+                        _context.Students.Update(student);
+                        _context.SaveChanges();
+                        string text1 = "Issue for Book:" + book.Title + "has exceeded  15 days. Fine of Rs 15 has been added. Return the book in time.";
+                        message.Add(text1);
+                    }
+                    string text = "Issue for Book:" + book.Title + "has exceeded  10 days. Return the book in time.";
+                    message.Add(text);
+                }
+            }
+            return message;
+        }
+        public async Task<IActionResult> Profile(int id)
+        {            
             var email = User.Identity.Name;
             if (email == "admin@admin.com")
             {
                 return RedirectToAction("Index", "Admin");
             }
-
+            List<string> notices = CheckState(id);
+            ViewBag.Message = notices;
             var issued = from x in _context.Issues
                          where x.StudentId == id
                          select x;  

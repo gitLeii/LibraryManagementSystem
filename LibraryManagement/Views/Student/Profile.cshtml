@@ -66,6 +66,13 @@
 
                 }
             </table>
+            @if (ViewBag.Message != null)
+            {
+                foreach( string item in @ViewBag.Message)
+                {
+                     <p class="alert alert-danger alert-dismissible">@item</p>
+                }               
+            }
         </dd>
     </dl>
 </div>
