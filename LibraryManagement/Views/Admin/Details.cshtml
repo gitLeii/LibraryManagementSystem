@@ -1,0 +1,46 @@
+﻿@model LibraryManagement.Models.Book
+@{
+    ViewData["Title"] = "Details";
+}
+<h2>Details</h2>
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Author)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Author)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Branch)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Branch)
+        </dd>
+    </dl>
+</div>
+<td>
+    @*<form asp-action="Issue" method="post">
+        <div class="form-group">            
+            @Html.HiddenFor(model => model.BookId)
+            <input type="submit" value="Issue" class="btn btn-success" />
+        </div>
+    </form>*@
+    <a asp-action="Update" asp-route-id="@Model.BookId" class="btn btn-light mx-3">Edit</a>    
+    <a asp-action="Delete" asp-route-id="@Model.BookId" class="btn btn-danger">Delete</a> 
+
+</td>
+<br />
+<p>
+    <a href="/">Back to list</a>
+</p>
+

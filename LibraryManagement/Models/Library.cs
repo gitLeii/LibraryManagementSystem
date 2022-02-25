@@ -19,6 +19,7 @@ namespace LibraryManagement.Models
         [EmailAddress]
         public string Email { get; set; }
         public Faculty Faculty { get; set; }
+        public int Fine { get; set; } = 0;
         public virtual ICollection<Issue>? Issues { get; set; }
     }
 

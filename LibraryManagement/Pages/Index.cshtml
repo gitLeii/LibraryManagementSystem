@@ -52,7 +52,7 @@
             });
             function Details(id) 
             {
-                var url = '@Url.Action("Details", "Book", new { id = "__id__" })';
+                var url = '@Url.Action("Details", "Book" , new { id = "__id__" })';
                 window.location.href = url.replace('__id__', id); 
             }
 

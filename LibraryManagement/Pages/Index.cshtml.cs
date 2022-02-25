@@ -12,7 +12,7 @@ namespace LibraryManagement.Pages
             _context = context;
         }
         public IActionResult OnGetDisplay()
-        {
+        {                        
             var books = _context.Books.ToList();
             return new JsonResult(books);
         }

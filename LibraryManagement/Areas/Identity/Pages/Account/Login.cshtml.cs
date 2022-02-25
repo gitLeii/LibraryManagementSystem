@@ -122,6 +122,10 @@ namespace LibraryManagement.Areas.Identity.Pages.Account
                                 select x;
                     var id = query.FirstOrDefault().Id;
                     _logger.LogInformation("User logged in.");
+                    if (Input.Email == "admin@admin.com")
+                    {
+                        return RedirectToAction("Index", "Admin");
+                    }
                     return RedirectToAction("Profile","Student", new {id = id});
                 }
                 if (result.RequiresTwoFactor)

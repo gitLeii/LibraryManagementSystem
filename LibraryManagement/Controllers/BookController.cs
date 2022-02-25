@@ -25,8 +25,6 @@ namespace LibraryManagement.Controllers
             var bookData = _context.Books.ToList<Book>();
             var jsonData = new { data = bookData };
             return Json(jsonData, new Newtonsoft.Json.JsonSerializerSettings());
-            /*var books = _context.Books.ToList();
-            return new JsonResult(books);*/
         }
         [HttpGet]
         public Book Get(int id)
@@ -36,6 +34,14 @@ namespace LibraryManagement.Controllers
         [HttpGet]
         public IActionResult Details(int id)
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                var email = User.Identity.Name;
+                if (email == "admin@admin.com")
+                {
+                    return RedirectToAction("Details", "Admin", new { id = id });
+                }
+            }
             var bookData = _context.Books.Find(id);
             return View(bookData);
         }
