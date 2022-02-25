@@ -19,6 +19,7 @@ namespace LibraryManagement.Controllers
         {
             return RedirectToAction("Index", "Admin");
         }
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Details(int id, string message = "")
         {
@@ -39,20 +40,34 @@ namespace LibraryManagement.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
+                // check user
                 var email = User.Identity.Name;
                 var query = from x in _context.Students
                             where email == x.Email
                             select x.Id;
                 issue.StudentId = query.FirstOrDefault();
                 issue.IssueDate = DateTime.Now;
+                //
+                // check if the book is already issued
                 var checkIssue = from x in _context.Issues
                                  where issue.StudentId == x.StudentId
                                  && issue.BookId == x.BookId
                                  select x;
-                if (checkIssue != null)
+                var check = checkIssue.ToList();
+                if (check.Count() != 0)
                 {
                     return RedirectToAction("Details", new { id = issue.BookId, message = "This Book is already Issued" });
                 }
+                //
+                // check if max issues is reached
+                var checkMax = from x in _context.Issues
+                               where issue.StudentId == x.StudentId
+                               select x;
+                if(checkMax.ToList().Count() >=3)
+                {
+                    return RedirectToAction("Details", new { id = issue.BookId, message = "You have reached Maximum no of issues. Return books to issue more." });
+                }
+                //
                 if (ModelState.IsValid)
                 {
                     _context.Issues.Add(issue);
