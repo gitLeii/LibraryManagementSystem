@@ -15,13 +15,17 @@ namespace LibraryManagement.Controllers
             _context = context;
         }
         // Get Books
-        public async Task<IActionResult> Index()
+        /*public async Task<IActionResult> Index()
         {
             return View(await _context.Students.ToListAsync());
-        }
+        }*/
         // Get: Library/Create
         public IActionResult Create(string email)
-        {
+        {            
+            if(email == null)
+            {
+                return Redirect("../../Identity/Account/Register");
+            }
             Student student = new Student();
             student.Email = email;
             return View(student);
@@ -44,7 +48,7 @@ namespace LibraryManagement.Controllers
             var email = User.Identity.Name;
             if (Validate(id) != true)
             {
-                return RedirectToAction("../Identity/Account/Login");
+                return RedirectToAction("../../Identity/Account/Login");
             }
             Student student = _context.Students.Find(id);
             return View(student);
