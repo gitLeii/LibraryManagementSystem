@@ -108,7 +108,7 @@ namespace LibraryManagement.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
 
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();            
 
             if (ModelState.IsValid)
             {
@@ -126,6 +126,7 @@ namespace LibraryManagement.Areas.Identity.Pages.Account
                     {
                         return Redirect("/");
                     }
+                    HttpContext.Session.SetString("ID", id.ToString());
                     return RedirectToAction("Profile","Student", new {id = id});
                 }
                 if (result.RequiresTwoFactor)

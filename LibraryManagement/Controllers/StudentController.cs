@@ -41,6 +41,11 @@ namespace LibraryManagement.Controllers
         }
         public IActionResult Update(int id)
         {
+            var email = User.Identity.Name;
+            if (Validate(id) != true)
+            {
+                return RedirectToAction("../Identity/Account/Login");
+            }
             Student student = _context.Students.Find(id);
             return View(student);
         }
@@ -84,7 +89,11 @@ namespace LibraryManagement.Controllers
             return message;
         }
         public async Task<IActionResult> Profile(int id)
-        {            
+        {           
+            if(Validate(id) != true)
+            {
+                return Redirect("../../Identity/Account/Login");
+            }
             var email = User.Identity.Name;
             if (email == "admin@admin.com")
             {
@@ -99,6 +108,15 @@ namespace LibraryManagement.Controllers
             ViewBag.Issued = issued.ToList();
             Student ? student = await _context.Students.FindAsync(id);
             return View(student);
+        }
+        public bool Validate( int  id )
+        {
+            var userId = HttpContext.Session.GetString("ID"); 
+            if ( id.ToString() != userId)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
