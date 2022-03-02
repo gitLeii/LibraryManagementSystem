@@ -89,14 +89,6 @@ namespace LibraryManagement.Controllers
             _bookService.Delete(id);
             return Redirect("/");
         }
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _context.Dispose();
-            }
-            base.Dispose(disposing);
-        }
         public bool checkValidate(int id)
         {
             var userId = HttpContext.Session.GetString("ID");
@@ -125,6 +117,14 @@ namespace LibraryManagement.Controllers
                 return true;
             }
             return false;
+        }
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _context.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

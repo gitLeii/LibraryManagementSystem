@@ -29,14 +29,25 @@
     </dl>
 </div>
 <td>
-    <form asp-action="Issue" method="post">
-        <div class="form-group">            
-            @Html.HiddenFor(model => model.BookId)
-            <input type="submit" value="Issue" class="btn btn-success" />
+    <div class="row">
+        <div class="col-md-1">
+            <form asp-action="Issue" method="post">
+                <div class="form-group">            
+                    @Html.HiddenFor(model => model.BookId)
+                    <input type="submit" value="Issue" class="btn btn-success" />
+                </div>
+            </form>
         </div>
-    </form>
-    @*<a asp-action="Edit" asp-route-id="Model.BookId" class="btn btn-light mx-3">Edit</a>    
-    <a asp-action="Delete" asp-route-id="Model.BookId" class="btn btn-danger">Delete</a>*@ 
+        <div class="col-md-1">
+            <form asp-action="Reserve" method="post">
+                <div class="form-group">            
+                    @Html.HiddenFor(model => model.BookId)
+                    <input type="submit" value="Reserve" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>  
+
 
 </td>
 <br />

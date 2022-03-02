@@ -80,6 +80,11 @@ namespace LibraryManagement.Controllers
             return Redirect("../Identity/Account/Login");
         }
         [HttpPost]
+        public IActionResult Reserve()
+        {
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
         public IActionResult Return(int id)
         {
             var query = from x in _context.Issues
