@@ -45,18 +45,33 @@ namespace LibraryManagement.Controllers
         [HttpGet]
         public IActionResult Create()
         {
+            var email = HttpContext.User.Identity.Name;
+            if (checkUser(email) == false)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Book book)
         {
+            Validate(book);
             _bookService.Add(book);
             return RedirectToAction(nameof(Index));
         }
         [HttpGet]
-        public IActionResult Update(int id)
+        public IActionResult Update(int? id)
         {
+            if ( id == null )
+            {
+                return RedirectToAction("Index");
+            }
+            var email = HttpContext.User.Identity.Name;
+            if(checkUser(email) == false)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
             Book book = _context.Books.Find(id);
             return View(book);
         }
@@ -64,6 +79,7 @@ namespace LibraryManagement.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Update(Book book)
         {
+            Validate(book);
             _bookService.Update(book);
             return RedirectToAction("Details", new { id = book.BookId });
         }
@@ -80,6 +96,35 @@ namespace LibraryManagement.Controllers
                 _context.Dispose();
             }
             base.Dispose(disposing);
+        }
+        public bool checkValidate(int id)
+        {
+            var userId = HttpContext.Session.GetString("ID");
+            if (id.ToString() != userId)
+            {
+                HttpContext.Session.SetString("ID", "");
+                return false;
+            }
+            return true;
+        }
+        public void Validate(Book book)
+        {
+            var query = from x in _context.Issues
+                        where book.BookId == x.BookId
+                        select x;
+            int id = query.First().StudentId;
+            if (checkValidate(id) != true)
+            {
+                Redirect("/Identity/Account/Login");
+            }
+        }
+        public bool checkUser( string email )
+        {
+            if ( email == "admin@admin.com")
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
