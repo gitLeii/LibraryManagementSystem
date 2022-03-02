@@ -24,7 +24,7 @@ namespace LibraryManagement.Controllers
         {            
             if(email == null)
             {
-                return Redirect("../../Identity/Account/Register");
+                return Redirect("/Identity/Account/Register");
             }
             Student student = new Student();
             student.Email = email;
@@ -48,7 +48,7 @@ namespace LibraryManagement.Controllers
             var email = User.Identity.Name;
             if (Validate(id) != true)
             {
-                return RedirectToAction("../../Identity/Account/Login");
+                return Redirect("/Identity/Account/Login");
             }
             Student student = _context.Students.Find(id);
             return View(student);
@@ -74,7 +74,7 @@ namespace LibraryManagement.Controllers
                 DateTime d2 = x.IssueDate;
                 int checkDate = DateTime.Compare(d1, d2);
 
-                if (checkDate >= 0)
+                if (checkDate >= 10)
                 {
                     Book? book = _context.Books.Find(x.BookId);
                     if (checkDate >= 15)
@@ -93,16 +93,17 @@ namespace LibraryManagement.Controllers
             return message;
         }
         public async Task<IActionResult> Profile(int id)
-        {           
-            if(Validate(id) != true)
-            {
-                return Redirect("../../Identity/Account/Login");
-            }
+        {
             var email = User.Identity.Name;
             if (email == "admin@admin.com")
             {
                 return RedirectToAction("Index", "Admin");
             }
+            if (Validate(id) != true)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+            
             List<string> notices = CheckState(id);
             ViewBag.Message = notices;
             var issued = from x in _context.Issues
