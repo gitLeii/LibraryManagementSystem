@@ -29,22 +29,21 @@
     </dl>
 </div>
 <td>
-    <form asp-action="Issue" method="post">
+    @*<form asp-action="Issue" method="post">
         <div class="form-group">            
             @Html.HiddenFor(model => model.BookId)
             <input type="submit" value="Issue" class="btn btn-success" />
         </div>
-    </form>
-    @*<a asp-action="Edit" asp-route-id="Model.BookId" class="btn btn-light mx-3">Edit</a>    
-    <a asp-action="Delete" asp-route-id="Model.BookId" class="btn btn-danger">Delete</a>*@ 
+    </form>*@
+    <a asp-action="Update" asp-route-id="@Model.BookId" class="btn btn-light mx-3">Edit</a>    
+    <form asp-action="Delete" asp-route-id="@Model.BookId" method="post">
+        <div class="form-group">            
+            @Html.HiddenFor(model => model.BookId)
+            <input type="submit" value="Delete" class="btn btn-danger" />
+        </div>
+    </form> 
 
 </td>
-<br />
-<br />
-@if (ViewBag.Message != "")
-    {
-        <p class="alert alert-danger alert-dismissible">@ViewBag.Message</p>
-    }
 <br />
 <p>
     <a href="/">Back to list</a>

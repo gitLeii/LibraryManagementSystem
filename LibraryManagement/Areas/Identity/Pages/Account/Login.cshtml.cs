@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using LibraryManagement.Data;
 
 namespace LibraryManagement.Areas.Identity.Pages.Account
 {
@@ -21,11 +22,13 @@ namespace LibraryManagement.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, ApplicationDbContext context)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _context = context;
         }
 
         /// <summary>
@@ -105,7 +108,7 @@ namespace LibraryManagement.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
 
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();            
 
             if (ModelState.IsValid)
             {
@@ -114,9 +117,17 @@ namespace LibraryManagement.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-
+                    var query = from x in _context.Students
+                                where Input.Email == x.Email
+                                select x;
+                    var id = query.FirstOrDefault().Id;
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    if (Input.Email == "admin@admin.com")
+                    {
+                        return Redirect("/");
+                    }
+                    HttpContext.Session.SetString("ID", id.ToString());
+                    return RedirectToAction("Profile","Student", new {id = id});
                 }
                 if (result.RequiresTwoFactor)
                 {

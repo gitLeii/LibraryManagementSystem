@@ -1,0 +1,85 @@
+﻿@model LibraryManagement.Models.Student
+@{
+    ViewData["Title"] = "Details";
+    List<Issue> issued = ViewBag.Issued;
+}
+<h2>Details</h2>
+<div class="row">
+    <div class="col-md-5">
+        <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email) 
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Faculty)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Faculty)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Fine)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Fine)
+        </dd>
+        </dl>
+    </div>
+    <dl class="col-md-7">
+        <dd>
+            <dt>Books Issued</dt>
+            <table class="table">
+                <tr>
+                    <th>BookId</th>
+                    <th>Issued Date</th>
+                    <th></th>
+                </tr>
+                @foreach (var item in @issued)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BookId)
+                        </td> 
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IssueDate)
+                        </td>
+                        <td>
+                            <a asp-controller="Book" asp-action="Details" asp-route-id="@item.BookId" class="btn btn-light">Details</a>  
+                            <form asp-controller="Book" asp-action="Return" asp-route-id="@item.BookId" method="post">
+                                <div class="form-group">
+                                    <input type="submit" value="Return" class="btn btn-danger" />
+                                </div>
+                            </form> 
+                        </td>
+                    </tr>
+
+                }
+            </table>
+            @if (ViewBag.Message != null)
+            {
+                foreach( string item in @ViewBag.Message)
+                {
+                     <p class="alert alert-danger alert-dismissible">@item</p>
+                }               
+            }
+        </dd>
+    </dl>
+</div>
+
+<td>
+    <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-light">Edit Profile</a>
+</td>
+<br />
+
+

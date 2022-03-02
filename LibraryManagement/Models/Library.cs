@@ -19,6 +19,7 @@ namespace LibraryManagement.Models
         [EmailAddress]
         public string Email { get; set; }
         public Faculty Faculty { get; set; }
+        public int Fine { get; set; } = 0;
         public virtual ICollection<Issue>? Issues { get; set; }
     }
 
@@ -51,12 +52,13 @@ namespace LibraryManagement.Models
     }
     public class Issue
     {
+        [Key]
         public int IssueId { get; set; }
         public DateTime IssueDate { get; set; }
         public Status Status { get; set; }
         public int StudentId { get; set; }
         public int BookId { get; set; }
-        public virtual Book Book { get; set; }
-        public virtual Student Student { get; set; }
+        public virtual Book? Book { get; set; }
+        public virtual Student? Student { get; set; }
     }
 }
