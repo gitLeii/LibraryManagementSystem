@@ -3,6 +3,7 @@ using LibraryManagement.IService;
 using LibraryManagement.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Linq;
 using System.Net;
@@ -18,6 +19,47 @@ namespace LibraryManagement.Controllers
         {
             _bookService = bookService;
             _context = context;
+        }
+        [HttpGet]
+        public IActionResult IssueRequests()
+        {
+            var issue = _context.Issues
+                .Where(x => x.Status == 0)
+                .ToList();
+            return View(issue);
+        }
+        [HttpPost]
+        public IActionResult Issue(int id)
+        {
+            string query = "Update Issues" +
+                " Set [Status] = 1 " +
+                "Where IssueId = @id";
+            ExecuteToSQL(query, id);
+            return RedirectToAction("IssueRequests");
+        }
+        protected void ExecuteToSQL(string sqlQuery, int id)
+        {
+            string constr = "Server=(localdb)\\mssqllocaldb;Database=aspnet-LibraryManagement-0222AD35-3E1F-401E-97B0-CB9C97C9206C;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+            using (SqlConnection con = new(constr))
+            {
+                using (SqlCommand cmd = new(sqlQuery, con))
+                {
+                    cmd.Parameters.Add(new SqlParameter("id", id));
+                    try
+                    {
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        con.Close();
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
+                }
+            }
+
         }
         [HttpGet]
         public IActionResult Index()

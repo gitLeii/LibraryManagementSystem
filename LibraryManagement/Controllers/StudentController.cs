@@ -108,6 +108,7 @@ namespace LibraryManagement.Controllers
             ViewBag.Message = notices;
             var issued = from x in _context.Issues
                          where x.StudentId == id
+                         && x.Status != 0
                          select x;  
             
             ViewBag.Issued = issued.ToList();
