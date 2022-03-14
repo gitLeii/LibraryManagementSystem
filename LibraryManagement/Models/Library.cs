@@ -24,9 +24,10 @@ namespace LibraryManagement.Models
     }
 
     public enum Status
-    {
+    {        
         Reserved,
-        Issued
+        Issued,
+        Available
     }
     public enum Branch
     {
@@ -39,15 +40,29 @@ namespace LibraryManagement.Models
         [Key]
         public int BookId { get; set; }
         [Required]
-        [StringLength(100)]
+        [StringLength(10, ErrorMessage = "The value cannot exceed 5 characters. ")]
         public string Title { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string Publication { get; set; }
         [Required]
         [StringLength(100)]
         public string Author { get; set; }
         [Required]
         public Branch Branch { get; set; }
+        [Required]
+        public int Quantity { get; set; }
         public virtual ICollection<Issue>? Issues { get; set; }
-
+    }
+    public class BooksPartial
+    {
+        [Key]
+        public int Id { get; set; }
+        [Required]
+        public string BookNumber { get; set; }
+        public Status? Status { get; set; }
+        public int BookId { get; set; }
+        public virtual ICollection<Book> Books {get; set;} 
     }
     public class Issue
     {

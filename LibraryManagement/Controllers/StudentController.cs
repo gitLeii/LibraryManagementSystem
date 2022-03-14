@@ -14,12 +14,7 @@ namespace LibraryManagement.Controllers
         {
             _context = context;
         }
-        // Get Books
-        /*public async Task<IActionResult> Index()
-        {
-            return View(await _context.Students.ToListAsync());
-        }*/
-        // Get: Library/Create
+        [AllowAnonymous]
         public IActionResult Create(string email)
         {            
             if(email == null)
@@ -30,6 +25,7 @@ namespace LibraryManagement.Controllers
             student.Email = email;
             return View(student);
         }
+        [AllowAnonymous]
         //Post:Library/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -39,7 +35,7 @@ namespace LibraryManagement.Controllers
             {
                 _context.Students.Add(student);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return Redirect("/");
             }
             return View(student);
         }

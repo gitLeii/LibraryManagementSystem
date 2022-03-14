@@ -13,7 +13,8 @@ namespace LibraryManagement.Service
         }
         public string Delete(int bookId)
         {
-            var book = _context.Books.FirstOrDefault(x => x.BookId == bookId);
+            //var book = _context.Books.FirstOrDefault(x => x.BookId == bookId);
+            var book = _context.Books.Find(bookId);
             if (book != null)
             {
                 _context.Books.Remove(book);
@@ -25,9 +26,21 @@ namespace LibraryManagement.Service
         {
             return _context.Books.SingleOrDefault(x => x.BookId == bookId);
         }
-        public List<Book> GetBooks()
+        public List<Book> GetAllBooks()
         {
-            return _context.Books.ToList<Book>();
+            try
+            {
+                var books = _context.Books;
+                if(books.Count() == 0)
+                {
+                    return new List<Book>();
+                }
+                return books.AsEnumerable().ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
         public void Add(Book book)
         {

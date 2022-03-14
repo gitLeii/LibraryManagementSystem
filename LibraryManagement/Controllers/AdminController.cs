@@ -1,12 +1,11 @@
 ﻿using LibraryManagement.Data;
 using LibraryManagement.IService;
 using LibraryManagement.Models;
+using LibraryManagement.Validation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Net;
 
 namespace LibraryManagement.Controllers
 {
@@ -15,51 +14,12 @@ namespace LibraryManagement.Controllers
     {
         IBookService _bookService = null;
         private readonly ApplicationDbContext _context;
+        private readonly BookTitleValidation _validation;
         public AdminController(IBookService bookService, ApplicationDbContext context)
         {
             _bookService = bookService;
             _context = context;
-        }
-        [HttpGet]
-        public IActionResult IssueRequests()
-        {
-            var issue = _context.Issues
-                .Where(x => x.Status == 0)
-                .ToList();
-            return View(issue);
-        }
-        [HttpPost]
-        public IActionResult Issue(int id)
-        {
-            string query = "Update Issues" +
-                " Set [Status] = 1 " +
-                "Where IssueId = @id";
-            ExecuteToSQL(query, id);
-            return RedirectToAction("IssueRequests");
-        }
-        protected void ExecuteToSQL(string sqlQuery, int id)
-        {
-            string constr = "Server=(localdb)\\mssqllocaldb;Database=aspnet-LibraryManagement-0222AD35-3E1F-401E-97B0-CB9C97C9206C;Trusted_Connection=True;MultipleActiveResultSets=true";
-
-            using (SqlConnection con = new(constr))
-            {
-                using (SqlCommand cmd = new(sqlQuery, con))
-                {
-                    cmd.Parameters.Add(new SqlParameter("id", id));
-                    try
-                    {
-                        con.Open();
-                        cmd.ExecuteNonQuery();
-                        con.Close();
-                    }
-                    catch (Exception ex)
-                    {
-
-                    }
-
-                }
-            }
-
+            _validation = new BookTitleValidation();
         }
         [HttpGet]
         public IActionResult Index()
@@ -74,10 +34,23 @@ namespace LibraryManagement.Controllers
             return Json(jsonData, new Newtonsoft.Json.JsonSerializerSettings());
         }
         [HttpGet]
-        public Book Get(int id)
+        public IActionResult IssueRequests()
         {
-            return _bookService.GetById(id);
+            var issue = _context.Issues
+                .Where(x => x.Status == 0)
+                .ToList();
+            return View(issue);
         }
+        [HttpPost]
+        public IActionResult Issue(int id)
+        {
+            string query = "Update Issues" +
+                " Set [Status] = 1 " +
+                "Where IssueId = @id";  
+            ExecuteToSQL(query, id);
+            return RedirectToAction("IssueRequests"); 
+        }
+        
         [HttpGet]
         public IActionResult Details(int id)
         {
@@ -99,6 +72,16 @@ namespace LibraryManagement.Controllers
         public IActionResult Create(Book book)
         {
             Validate(book);
+            if (!ModelState.IsValid)
+            {
+                return View(book);
+            }
+            /*if (!_validation.IsValidTitle(book.Title))
+            {
+                ModelState.AddModelError("Title", "Max Length of title must me 5");
+                return View(book);
+            }*/
+            book.Branch.ToString();
             _bookService.Add(book);
             return RedirectToAction(nameof(Index));
         }
@@ -122,6 +105,10 @@ namespace LibraryManagement.Controllers
         public IActionResult Update(Book book)
         {
             Validate(book);
+            if (!ModelState.IsValid)
+            {
+                return View(book);
+            }
             _bookService.Update(book);
             return RedirectToAction("Details", new { id = book.BookId });
         }
@@ -143,14 +130,22 @@ namespace LibraryManagement.Controllers
         }
         public void Validate(Book book)
         {
-            var query = from x in _context.Issues
-                        where book.BookId == x.BookId
-                        select x;
-            int id = query.First().StudentId;
-            if (checkValidate(id) != true)
+            try
             {
-                Redirect("/Identity/Account/Login");
+                var query = from x in _context.Issues
+                            where book.BookId == x.BookId
+                            select x;
+                int id = query.First().StudentId;
+                if (checkValidate(id) != true)
+                {
+                    Redirect("/Identity/Account/Login");
+                }
             }
+            catch (Exception ex)
+            {
+
+            }
+            
         }
         public bool checkUser( string email )
         {
@@ -159,6 +154,30 @@ namespace LibraryManagement.Controllers
                 return true;
             }
             return false;
+        }
+        protected void ExecuteToSQL(string sqlQuery, int id)
+        {
+            string constr = "Server=(localdb)\\mssqllocaldb;Database=LibraryManagement;Trusted_Connection=True;MultipleActiveResultSets=true";
+
+            using (SqlConnection con = new(constr))
+            {
+                using (SqlCommand cmd = new(sqlQuery, con))
+                {
+                    cmd.Parameters.Add(new SqlParameter("id", id));
+                    try
+                    {
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        con.Close();
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
+                }
+            }
+
         }
         protected override void Dispose(bool disposing)
         {

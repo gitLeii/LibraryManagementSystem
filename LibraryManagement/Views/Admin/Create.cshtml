@@ -16,6 +16,11 @@
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Publication" class="control-label"></label>
+                <input asp-for="Publication" class="form-control" />
+                <span asp-validation-for="Publication" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Author" class="control-label"></label>
                 <input asp-for="Author" class="form-control" />
                 <span asp-validation-for="Author" class="text-danger"></span>
@@ -26,6 +31,11 @@
                 <option selected="selected" value="">Please select</option>
                 </select>
                 <span asp-validation-for="Branch" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Quantity" class="control-label"></label>
+                <input asp-for="Quantity" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
             <br />
             <div class="form-group">

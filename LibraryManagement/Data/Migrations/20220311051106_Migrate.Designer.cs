@@ -4,6 +4,7 @@ using LibraryManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryManagement.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220311051106_Migrate")]
+    partial class Migrate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,53 +37,17 @@ namespace LibraryManagement.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("BooksPartialId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Branch")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Publication")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
                     b.HasKey("BookId");
 
-                    b.HasIndex("BooksPartialId");
-
                     b.ToTable("Books");
-                });
-
-            modelBuilder.Entity("LibraryManagement.Models.BooksPartial", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("BookNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AllBooks");
                 });
 
             modelBuilder.Entity("LibraryManagement.Models.Issue", b =>
@@ -343,13 +309,6 @@ namespace LibraryManagement.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("LibraryManagement.Models.Book", b =>
-                {
-                    b.HasOne("LibraryManagement.Models.BooksPartial", null)
-                        .WithMany("Books")
-                        .HasForeignKey("BooksPartialId");
-                });
-
             modelBuilder.Entity("LibraryManagement.Models.Issue", b =>
                 {
                     b.HasOne("LibraryManagement.Models.Book", "Book")
@@ -423,11 +382,6 @@ namespace LibraryManagement.Data.Migrations
             modelBuilder.Entity("LibraryManagement.Models.Book", b =>
                 {
                     b.Navigation("Issues");
-                });
-
-            modelBuilder.Entity("LibraryManagement.Models.BooksPartial", b =>
-                {
-                    b.Navigation("Books");
                 });
 
             modelBuilder.Entity("LibraryManagement.Models.Student", b =>

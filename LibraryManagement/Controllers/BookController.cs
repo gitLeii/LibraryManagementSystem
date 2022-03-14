@@ -73,13 +73,22 @@ namespace LibraryManagement.Controllers
                     _context.Issues.Add(issue);
                     _context.SaveChanges();
                 }
-                return RedirectToAction("Profile", "Student", new { id = issue.StudentId });                              
+                return RedirectToAction("Profile", "Student", new { id = issue.StudentId });                       
                 
             }
             
             return Redirect("../Identity/Account/Login");
         }
-        
+        [HttpPost]
+        public IActionResult Reserve(int id)
+        {
+            string query = "Update AllBooks" +
+                " Set [Status] = 1 " +
+                "Where IssueId = @id";
+            //ExecuteToSQL(query, id);
+            return Redirect("/");
+        }
+
         [HttpPost]
         public IActionResult Return(int id)
         {
