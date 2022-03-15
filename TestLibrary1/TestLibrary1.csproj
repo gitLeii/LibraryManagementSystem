@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LibraryManagement\LibraryManagement.csproj" />
+    <ProjectReference Include="..\XTestLibrary1\XTestLibrary1.csproj" />
   </ItemGroup>
 
 </Project>

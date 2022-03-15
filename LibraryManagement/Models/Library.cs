@@ -53,6 +53,7 @@ namespace LibraryManagement.Models
         [Required]
         public int Quantity { get; set; }
         public virtual ICollection<Issue>? Issues { get; set; }
+        public virtual ICollection<BooksPartial>? Books { get; set; }
     }
     public class BooksPartial
     {
@@ -62,7 +63,8 @@ namespace LibraryManagement.Models
         public string BookNumber { get; set; }
         public Status? Status { get; set; }
         public int BookId { get; set; }
-        public virtual ICollection<Book>? Books {get; set;} 
+        public virtual ICollection<Book>? Books {get; set;}
+        public virtual ICollection<Issue>? Issues { get; set; }
     }
     public class Issue
     {
@@ -72,7 +74,9 @@ namespace LibraryManagement.Models
         public Status Status { get; set; }
         public int StudentId { get; set; }
         public int BookId { get; set; }
+        public int BooksPartialId { get; set; }
         public virtual Book? Book { get; set; }
+        public virtual BooksPartial? Books { get; set; }
         public virtual Student? Student { get; set; }
     }
 }

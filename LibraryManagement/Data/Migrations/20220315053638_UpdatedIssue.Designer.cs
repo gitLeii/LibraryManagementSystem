@@ -4,6 +4,7 @@ using LibraryManagement.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryManagement.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220315053638_UpdatedIssue")]
+    partial class UpdatedIssue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace LibraryManagement.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("BookBooksPartial", b =>
-                {
-                    b.Property<int>("BooksBookId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BooksId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BooksBookId", "BooksId");
-
-                    b.HasIndex("BooksId");
-
-                    b.ToTable("BookBooksPartial");
-                });
 
             modelBuilder.Entity("LibraryManagement.Models.Book", b =>
                 {
@@ -49,6 +36,9 @@ namespace LibraryManagement.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("BooksPartialId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Branch")
                         .HasColumnType("int");
@@ -67,6 +57,8 @@ namespace LibraryManagement.Data.Migrations
                         .HasColumnType("nvarchar(10)");
 
                     b.HasKey("BookId");
+
+                    b.HasIndex("BooksPartialId");
 
                     b.ToTable("Books");
                 });
@@ -358,19 +350,11 @@ namespace LibraryManagement.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BookBooksPartial", b =>
+            modelBuilder.Entity("LibraryManagement.Models.Book", b =>
                 {
-                    b.HasOne("LibraryManagement.Models.Book", null)
-                        .WithMany()
-                        .HasForeignKey("BooksBookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("LibraryManagement.Models.BooksPartial", null)
-                        .WithMany()
-                        .HasForeignKey("BooksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Books")
+                        .HasForeignKey("BooksPartialId");
                 });
 
             modelBuilder.Entity("LibraryManagement.Models.Issue", b =>
@@ -382,7 +366,7 @@ namespace LibraryManagement.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("LibraryManagement.Models.BooksPartial", "Books")
-                        .WithMany("Issues")
+                        .WithMany()
                         .HasForeignKey("BooksPartialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -458,7 +442,7 @@ namespace LibraryManagement.Data.Migrations
 
             modelBuilder.Entity("LibraryManagement.Models.BooksPartial", b =>
                 {
-                    b.Navigation("Issues");
+                    b.Navigation("Books");
                 });
 
             modelBuilder.Entity("LibraryManagement.Models.Student", b =>

@@ -37,17 +37,30 @@ namespace LibraryManagement.Controllers
         public IActionResult IssueRequests()
         {
             var issue = _context.Issues
-                .Where(x => x.Status == 0)
+                .Where(x => x.Status == Status.Reserved)
                 .ToList();
             return View(issue);
         }
         [HttpPost]
         public IActionResult Issue(int id)
         {
-            string query = "Update Issues" +
+            /*string query = "Update Issues" +
                 " Set [Status] = 1 " +
                 "Where IssueId = @id";  
-            ExecuteToSQL(query, id);
+            ExecuteToSQL(query, id);*/
+            var query = from x in _context.Issues
+                        where x.IssueId == id
+                        select x;
+            Issue issue = query.FirstOrDefault();
+            issue.Status = Status.Issued;
+            //query for books partial
+            var queryBooks = from x in _context.AllBooks
+                        where issue.BooksPartialId == x.Id
+                        select x;
+            BooksPartial books = queryBooks.FirstOrDefault();
+            books.Status = Status.Issued;
+            //
+            _context.SaveChanges();
             return RedirectToAction("IssueRequests"); 
         }
         [HttpGet]
@@ -193,7 +206,7 @@ namespace LibraryManagement.Controllers
             }
             return false;
         }
-        protected void ExecuteToSQL(string sqlQuery, int id)
+        /*protected void ExecuteToSQL(string sqlQuery, int id)
         {
             string constr = "Server=(localdb)\\mssqllocaldb;Database=LibraryManagement;Trusted_Connection=True;MultipleActiveResultSets=true";
 
@@ -216,7 +229,7 @@ namespace LibraryManagement.Controllers
                 }
             }
 
-        }
+        }*/
         protected override void Dispose(bool disposing)
         {
             if (disposing)

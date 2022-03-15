@@ -93,7 +93,7 @@ namespace LibraryManagement.Controllers
             var email = User.Identity.Name;
             if (email == "admin@admin.com")
             {
-                return RedirectToAction("Index", "Admin");
+                return RedirectToAction("IssueRequests", "Admin");
             }
             if (Validate(id) != true)
             {
@@ -104,9 +104,13 @@ namespace LibraryManagement.Controllers
             ViewBag.Message = notices;
             var issued = from x in _context.Issues
                          where x.StudentId == id
-                         && x.Status != 0
+                         && x.Status == Status.Issued
                          select x;  
-            
+            var query = from x in _context.Issues
+                        where x.StudentId == id
+                        && x.Status == Status.Reserved
+                        select x;
+            ViewBag.Reserved = query.ToList();
             ViewBag.Issued = issued.ToList();
             Student ? student = await _context.Students.FindAsync(id);
             return View(student);

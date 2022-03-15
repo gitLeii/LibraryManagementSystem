@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Details";
     List<Issue> issued = ViewBag.Issued;
+    List<Issue> reserved = ViewBag.Reserved;
 }
 <h2>Details</h2>
 <div class="row">
@@ -43,6 +44,8 @@
                 <tr>
                     <th>BookId</th>
                     <th>Issued Date</th>
+                    <th>BookNumber</th>
+                    <th></th>
                     <th></th>
                 </tr>
                 @foreach (var item in @issued)
@@ -55,8 +58,46 @@
                             @Html.DisplayFor(modelItem => item.IssueDate)
                         </td>
                         <td>
+                            @Html.DisplayFor(modelItem => item.BooksPartialId)
+                        </td>
+                        <td>
                             <a asp-controller="Book" asp-action="Details" asp-route-id="@item.BookId" class="btn btn-light">Details</a>  
-                            <form asp-controller="Book" asp-action="Return" asp-route-id="@item.BookId" method="post">
+                        </td>
+                        <td>
+                            <form asp-controller="Book" asp-action="Return" asp-route-id="@item.BooksPartialId" method="post">
+                                <div class="form-group">
+                                    <input type="submit" value="Return" class="btn btn-danger" />
+                                </div>
+                            </form> 
+                        </td>
+                    </tr>
+
+                }
+
+            </table>
+            <dt>Books Reserved</dt>
+            <table class="table">
+                <tr>
+                    <th>BookId</th>
+                    <th>Issued Date</th>
+                    <th>BookNumber</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                @foreach (var item in @reserved)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BookId)
+                        </td> 
+                        <td>
+                            @Html.DisplayFor(modelItem => item.IssueDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BooksPartialId)
+                        </td>                        
+                        <td>
+                            <form asp-controller="Book" asp-action="Return" asp-route-id="@item.BooksPartialId" method="post">
                                 <div class="form-group">
                                     <input type="submit" value="Return" class="btn btn-danger" />
                                 </div>
@@ -73,6 +114,14 @@
                      <p class="alert alert-danger alert-dismissible">@item</p>
                 }               
             }
+            @if (ViewBag.Message != null)
+            {
+                foreach( string item in @ViewBag.Message)
+                {
+                     <p class="alert alert-danger alert-dismissible">@item</p>
+                }               
+            }
+
         </dd>
     </dl>
 </div>
