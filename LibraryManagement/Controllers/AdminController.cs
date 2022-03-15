@@ -50,10 +50,48 @@ namespace LibraryManagement.Controllers
             ExecuteToSQL(query, id);
             return RedirectToAction("IssueRequests"); 
         }
-        
+        [HttpGet]
+        public IActionResult AddBooks(int id)
+        {
+            var email = HttpContext.User.Identity.Name;
+            if (checkUser(email) == false)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+            BooksPartial book = new BooksPartial();
+            book.BookId = id;
+            var query = from x in _context.Books
+                        where id == x.BookId
+                        select x;
+            ViewBag.Quantity = query.First().Quantity;
+            return View(book);
+        }
+        [HttpPost]        
+        public IActionResult AddBooks(string[] BookNumber, int id)
+        {
+            List<BooksPartial> books = new List<BooksPartial>();
+            for (int i = 0; i<BookNumber.Length; i++)
+            {
+                BooksPartial book = new BooksPartial
+                {
+                    BookId = id,
+                    BookNumber = BookNumber[i],
+                    Status = Status.Available
+                };
+            books.Add(book);
+            }            
+            _context.AddRange(books);
+            _context.SaveChanges();
+            return RedirectToAction("Details", new {id = id});
+        }
         [HttpGet]
         public IActionResult Details(int id)
         {
+            var query = from x in _context.AllBooks
+                        where id == x.BookId
+                        select x;
+
+            ViewBag.bookList = query.ToList();
             var bookData = _context.Books.Find(id);
             return View(bookData);
         }
@@ -81,9 +119,9 @@ namespace LibraryManagement.Controllers
                 ModelState.AddModelError("Title", "Max Length of title must me 5");
                 return View(book);
             }*/
-            book.Branch.ToString();
             _bookService.Add(book);
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction("AddBooks", new { id = book.BookId }); ;
         }
         [HttpGet]
         public IActionResult Update(int? id)

@@ -1,0 +1,37 @@
+﻿@model LibraryManagement.Models.BooksPartial
+
+@{
+    ViewData["Title"] = "AddBooks";
+}
+
+<h2>Create</h2>
+<h3>Book</h3>
+<hr />
+<div class="row">
+    <div class="col-md-4">       
+        <form asp-action="AddBooks">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+             @for (int i=0; i<@ViewBag.Quantity ; i++)
+                {
+                    @Html.HiddenFor(model => model.BookId)
+                    @Html.HiddenFor(model => model.Status)
+                    <div class="form-group">
+                        <label asp-for="BookNumber" class="control-label"></label>
+                        <input asp-for="BookNumber" class="form-control" />
+                        <span asp-validation-for="BookNumber" class="text-danger"></span>
+                    </div>
+                    <br />
+                }          
+            <div class="form-group">
+                <input type="submit" value="Add" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

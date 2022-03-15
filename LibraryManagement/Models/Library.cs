@@ -24,16 +24,16 @@ namespace LibraryManagement.Models
     }
 
     public enum Status
-    {        
-        Reserved,
-        Issued,
-        Available
+    {
+        Available = 0,
+        Reserved = 1,
+        Issued= 2        
     }
     public enum Branch
     {
-        Masters,
-        Bachelors,
-        SchoolLevel
+        Masters=0,
+        Bachelors=1,
+        SchoolLevel=2
     }
     public class Book
     {
@@ -62,7 +62,7 @@ namespace LibraryManagement.Models
         public string BookNumber { get; set; }
         public Status? Status { get; set; }
         public int BookId { get; set; }
-        public virtual ICollection<Book> Books {get; set;} 
+        public virtual ICollection<Book>? Books {get; set;} 
     }
     public class Issue
     {

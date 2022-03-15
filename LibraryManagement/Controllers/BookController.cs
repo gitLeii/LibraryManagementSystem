@@ -80,13 +80,49 @@ namespace LibraryManagement.Controllers
             return Redirect("../Identity/Account/Login");
         }
         [HttpPost]
-        public IActionResult Reserve(int id)
+        public IActionResult Reserve(Issue issue)
         {
-            string query = "Update AllBooks" +
-                " Set [Status] = 1 " +
-                "Where IssueId = @id";
-            //ExecuteToSQL(query, id);
-            return Redirect("/");
+            if (User.Identity.IsAuthenticated)
+            {
+                // check user
+                var email = User.Identity.Name;
+                var query = from x in _context.Students
+                            where email == x.Email
+                            select x.Id;
+                issue.StudentId = query.FirstOrDefault();
+                issue.IssueDate = DateTime.Now;
+                //
+                // check if the book is already issued
+                var checkIssue = from x in _context.Issues
+                                 where issue.StudentId == x.StudentId
+                                 && issue.BookId == x.BookId
+                                 select x;
+                var check = checkIssue.ToList();
+                if (check.Count() != 0)
+                {
+                    return RedirectToAction("Details", new { id = issue.BookId, message = "This Book is already Issued" });
+                }
+                //
+                // check if max issues is reached
+                var checkMax = from x in _context.Issues
+                               where issue.StudentId == x.StudentId
+                               select x;
+                if (checkMax.ToList().Count() >= 3)
+                {
+                    return RedirectToAction("Details", new { id = issue.BookId, message = "You have reached Maximum no of issues. Return books to issue more." });
+                }
+                issue.Status = Status.Reserved;
+                //
+                if (ModelState.IsValid)
+                {
+                    _context.Issues.Add(issue);
+                    _context.SaveChanges();
+                }
+                return RedirectToAction("Profile", "Student", new { id = issue.StudentId });
+
+            }
+
+            return Redirect("../Identity/Account/Login");
         }
 
         [HttpPost]
