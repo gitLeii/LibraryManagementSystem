@@ -78,7 +78,7 @@
                     <form asp-controller="Book" asp-action="Return" asp-route-id="@item.BooksPartialId" method="post">
                         <div class="form-group">            
                             @Html.HiddenFor(modelItem => item.IssueId)
-                            <input type="submit" value="Issue" class="btn btn-success" />              
+                            <input type="submit" value="Return" class="btn btn-danger" />              
                         </div>
                     </form>
                 </td>

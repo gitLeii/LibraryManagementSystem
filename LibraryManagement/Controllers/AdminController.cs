@@ -153,46 +153,19 @@ namespace LibraryManagement.Controllers
                         select x;
 
             ViewBag.bookList = query.ToList();
-            var bookData = _context.Books.Find(id);
-
-            // integrate books and partial books
-            //
-            Integrate(id,bookData);
-            /*var integrateQuery = from x in _context.AllBooks
-                                 where x.BookId == id
-                                 select x;
-            if(integrateQuery.Any())
+            var bookData = _context.Books.Find(id);            
+            int quantity = query.Count();
+            if(query.Any())
             {
-                if (bookData.Quantity != integrateQuery.Count())
+                if(query.Count() != bookData.Quantity)
                 {
-                    BooksPartial books = _context.AllBooks.Find(integrateQuery.LastOrDefault().Id);
-                    _context.Remove(books);
-                    _context.SaveChanges();
-                }
-            }         */   
-            //
-            //
-            return View(bookData);
-        }
-        public void Integrate(int id, Book bookData)
-        {
-            // integrate books and partial books
-            //
-            var integrateQuery = from x in _context.AllBooks
-                                 where x.BookId == id
-                                 select x;
-            if (integrateQuery.Any())
-            {
-                if (bookData.Quantity != integrateQuery.Count())
-                {
-                    BooksPartial books = _context.AllBooks.Find(integrateQuery.LastOrDefault().Id);
-                    _context.Remove(books);
+                    bookData.Quantity = query.Count();
                     _context.SaveChanges();
                 }
             }
-            //
-            //
+            return View(bookData);
         }
+        
         [HttpGet]
         public IActionResult Create()
         {
@@ -272,6 +245,14 @@ namespace LibraryManagement.Controllers
         {
             _bookService.Delete(id);
             return Redirect("/");
+        }
+        [HttpPost]
+        public IActionResult Remove(int id)
+        {
+            BooksPartial book = _context.AllBooks.Find(id);
+            _context.Remove(book);
+            _context.SaveChanges();
+            return RedirectToAction("Details", new {id = book.BookId});
         }
         public bool checkValidate(int id)
         {

@@ -47,6 +47,7 @@
                     <tr>
                         <th>Books</th>    
                         <th>Status</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,6 +61,13 @@
                                     </td> 
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Status)
+                                    </td>
+                                    <td>
+                                    <form asp-action="Remove" asp-route-id="@item.Id" method="post">
+                                        <div class="form-group d-inline-block">                                                        
+                                            <input type="submit" value="Delete" class="btn btn-danger" />
+                                        </div>
+                                    </form>
                                     </td>
                                 </tr>
                             }
