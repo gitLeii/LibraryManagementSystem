@@ -36,9 +36,9 @@ namespace LibraryManagement.Controllers
         [HttpGet]
         public IActionResult IssueRequests()
         {
-            var issue = _context.Issues
-                .Where(x => x.Status == Status.Reserved)
-                .ToList();
+            var issue = _context.Issues;
+                /*.Where(x => x.Status == Status.Reserved)
+                .ToList();*/
             var query = _context.Settings.ToList();
             if (query.Count() == 0)
             {

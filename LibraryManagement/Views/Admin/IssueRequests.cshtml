@@ -26,7 +26,8 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ( var item in Model)
+        @foreach ( var item in Model.Where(x => x.Status == Status.Reserved)
+                .ToList())
         {
             <tr>
                 <td>
@@ -40,6 +41,41 @@
                 </td>
                 <td>                    
                     <form asp-action="Issue" asp-route-id="@item.IssueId" method="post">
+                        <div class="form-group">            
+                            @Html.HiddenFor(modelItem => item.IssueId)
+                            <input type="submit" value="Issue" class="btn btn-success" />              
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.BookId)</th>
+            <th>@Html.DisplayNameFor(model => model.StudentId)</th>            
+            <th>@Html.DisplayNameFor(model => model.IssueDate)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ( var item in Model.Where(x => x.Status == Status.Issued)
+                .ToList())
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BookId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StudentId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IssueDate)
+                </td>
+                <td>                    
+                    <form asp-controller="Book" asp-action="Return" asp-route-id="@item.BooksPartialId" method="post">
                         <div class="form-group">            
                             @Html.HiddenFor(modelItem => item.IssueId)
                             <input type="submit" value="Issue" class="btn btn-success" />              
