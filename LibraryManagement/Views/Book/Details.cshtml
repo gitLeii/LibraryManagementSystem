@@ -5,33 +5,69 @@
 <h2>Details</h2>
 
 <div>
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Publication)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Publication)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Author)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Branch)
-        </dt>
+    <div class="row">
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Title)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Title)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Publication)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Publication)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Author)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Author)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Branch)
+                </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Branch)
-        </dd>
-    </dl>
+                <dd>
+                    @Html.DisplayFor(model => model.Branch)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Quantity)  
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Quantity)
+                </dd>  
+               </dl>
+            </div>
+        <div class="col-md-6">
+            <table class="table  class= col-md-4">
+                <thead>
+                    <tr>
+                        <th>Books</th>    
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if( @ViewBag.bookList != null)
+                    {
+                        @foreach ( BooksPartial item in @ViewBag.bookList)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.BookNumber)
+                                    </td> 
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Status)
+                                    </td>
+                                </tr>
+                            }
+                    }       
+                </tbody>
+             </table>
+         </div>
+    </div>
 </div>
 <td>
     <div class="row">

@@ -125,7 +125,7 @@ namespace LibraryManagement.Areas.Identity.Pages.Account
                     _logger.LogInformation("User logged in.");
                     if (Input.Email == "admin@admin.com")
                     {
-                        return Redirect("/");
+                        return RedirectToAction("IssueRequests", "Admin");
                     }
                     HttpContext.Session.SetString("ID", id.ToString());
                     return RedirectToAction("Profile","Student", new {id = id});

@@ -31,6 +31,13 @@ namespace LibraryManagement.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind(include: "Name,Email,Faculty")] Student student)
         {
+            var query = from x in _context.Students
+                        where x.Id == student.Id
+                        select x;
+            if(query != null)
+            {
+                return View(student);
+            }
             if (ModelState.IsValid)
             {
                 _context.Students.Add(student);
@@ -59,12 +66,22 @@ namespace LibraryManagement.Controllers
         }
         public List<string> CheckState(int id)
         {
+            List<string> message = new List<string>();
+            //for reserved
+            var checkReserve = from x in _context.Issues
+                               where id == x.StudentId
+                               && x.Status == Status.Reserved
+                               select x;
+            var checkReserved = checkReserve.ToList();
+            message.AddRange(CheckReservedOrIssued(checkReserved,"Reserve"));
+            // for issued
             var query = from x in _context.Issues
                         where id == x.StudentId
+                        && x.Status == Status.Issued
                         select x;
             var checkIssue = query.ToList();
-            List<string> message = new List<string>();
-            foreach (var x in checkIssue)
+            message.AddRange(CheckReservedOrIssued(checkIssue, "Issue"));
+            /*foreach (var x in checkIssue)
             {
                 DateTime d1 = DateTime.Now; 
                 DateTime d2 = x.IssueDate;
@@ -84,6 +101,43 @@ namespace LibraryManagement.Controllers
                     }
                     string text = "Issue for Book:" + book.Title + "has exceeded  10 days. Return the book in time.";
                     message.Add(text);
+                }
+            }*/
+            return message;
+        }
+        public List<string> CheckReservedOrIssued(List<Issue> checkIssue, string text)
+        {
+            List<string> message = new List<string>();
+            foreach (var x in checkIssue)
+            {
+                DateTime d1 = DateTime.Now;
+                DateTime d2 = x.IssueDate;
+                int checkDate = DateTime.Compare(d1, d2);
+
+                if (checkDate >= 10)
+                {
+                    Book? book = _context.Books.Find(x.BookId);
+                    if (checkDate >= 15)
+                    {
+                        if( text == "Reserve")
+                        {
+                            foreach(var item in checkIssue)
+                            {
+                                RedirectToAction("Return", "Book", new { id = item.BooksPartialId });
+                            }                            
+                        }
+                        else
+                        {
+                            Student? student = _context.Students.Find(x.StudentId);
+                            student.Fine = 15;
+                            _context.Students.Update(student);
+                            _context.SaveChanges();
+                            string text1 = text + " for Book:" + book.Title + "has exceeded  15 days. Fine of Rs 15 has been added. Return the book in time.";
+                            message.Add(text1);
+                        }                        
+                    }
+                    string text2 = text + " for Book:" + book.Title + "has exceeded  10 days. Return the book in time.";
+                    message.Add(text2);
                 }
             }
             return message;

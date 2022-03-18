@@ -79,4 +79,9 @@ namespace LibraryManagement.Models
         public virtual BooksPartial? Books { get; set; }
         public virtual Student? Student { get; set; }
     }
+    public class ReserveSettings
+    {
+        public int ID { get; set; }
+        public int MaximumAllowedBooks { get; set; } = 0;
+    }
 }

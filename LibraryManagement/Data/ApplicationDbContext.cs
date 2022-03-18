@@ -15,6 +15,7 @@ namespace LibraryManagement.Data
         public virtual DbSet<Book> Books { get; set; }
         public DbSet<Issue> Issues { get; set; }
         public DbSet<BooksPartial> AllBooks { get; set; }
+        public DbSet<ReserveSettings> Settings { get; set; }
         
     }
 }

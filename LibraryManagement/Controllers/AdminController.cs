@@ -39,30 +39,65 @@ namespace LibraryManagement.Controllers
             var issue = _context.Issues
                 .Where(x => x.Status == Status.Reserved)
                 .ToList();
+            var query = _context.Settings.ToList();
+            if (query.Count() == 0)
+            {
+                ReserveSettings settings = new ReserveSettings { MaximumAllowedBooks = 0};
+                _context.Add(settings);
+                _context.SaveChanges();
+                ViewBag.Settings = settings.MaximumAllowedBooks.ToString();
+            }
+            else
+            {
+                ReserveSettings setttings1 = query.FirstOrDefault();
+                ViewBag.Settings = setttings1.MaximumAllowedBooks.ToString();
+            }
+             
             return View(issue);
+        }
+        [HttpPost]
+        public IActionResult MaxIssues(int maxReserve)
+        {
+            var query = _context.Settings.ToList();
+            if(query.Count() !=0 )
+            {
+                var changeVal = query.FirstOrDefault();
+                ReserveSettings settings = _context.Settings.Find(changeVal.ID);
+                settings.MaximumAllowedBooks = maxReserve;
+                _context.SaveChanges();                
+            }
+            return RedirectToAction("IssueRequests");
         }
         [HttpPost]
         public IActionResult Issue(int id)
         {
-            /*string query = "Update Issues" +
-                " Set [Status] = 1 " +
-                "Where IssueId = @id";  
-            ExecuteToSQL(query, id);*/
+            ////
+            
+            ////
             var query = from x in _context.Issues
                         where x.IssueId == id
                         select x;
             Issue issue = query.FirstOrDefault();
             issue.Status = Status.Issued;
+
             //query for books partial
             var queryBooks = from x in _context.AllBooks
                         where issue.BooksPartialId == x.Id
                         select x;
             BooksPartial books = queryBooks.FirstOrDefault();
+
+            // check if others have reserved the book before 
+            var checkReserved = from x in _context.Issues
+                                where issue.BooksPartialId == x.BooksPartialId
+                                && x.Status == Status.Reserved
+                                select x;
+            //
             books.Status = Status.Issued;
             //
             _context.SaveChanges();
             return RedirectToAction("IssueRequests"); 
         }
+
         [HttpGet]
         public IActionResult AddBooks(int id)
         {
@@ -76,7 +111,19 @@ namespace LibraryManagement.Controllers
             var query = from x in _context.Books
                         where id == x.BookId
                         select x;
-            ViewBag.Quantity = query.First().Quantity;
+            //
+            var checkPartialBooks = from x in _context.AllBooks
+                                    where x.BookId == id
+                                    select x;
+            if(checkPartialBooks.Any())
+            {
+                int quantity = query.FirstOrDefault().Quantity - checkPartialBooks.Count();
+                ViewBag.Quantity = quantity; 
+            }
+            else
+            {
+                ViewBag.Quantity = query.First().Quantity;
+            }            
             return View(book);
         }
         [HttpPost]        
@@ -100,13 +147,51 @@ namespace LibraryManagement.Controllers
         [HttpGet]
         public IActionResult Details(int id)
         {
+            
             var query = from x in _context.AllBooks
                         where id == x.BookId
                         select x;
 
             ViewBag.bookList = query.ToList();
             var bookData = _context.Books.Find(id);
+
+            // integrate books and partial books
+            //
+            Integrate(id,bookData);
+            /*var integrateQuery = from x in _context.AllBooks
+                                 where x.BookId == id
+                                 select x;
+            if(integrateQuery.Any())
+            {
+                if (bookData.Quantity != integrateQuery.Count())
+                {
+                    BooksPartial books = _context.AllBooks.Find(integrateQuery.LastOrDefault().Id);
+                    _context.Remove(books);
+                    _context.SaveChanges();
+                }
+            }         */   
+            //
+            //
             return View(bookData);
+        }
+        public void Integrate(int id, Book bookData)
+        {
+            // integrate books and partial books
+            //
+            var integrateQuery = from x in _context.AllBooks
+                                 where x.BookId == id
+                                 select x;
+            if (integrateQuery.Any())
+            {
+                if (bookData.Quantity != integrateQuery.Count())
+                {
+                    BooksPartial books = _context.AllBooks.Find(integrateQuery.LastOrDefault().Id);
+                    _context.Remove(books);
+                    _context.SaveChanges();
+                }
+            }
+            //
+            //
         }
         [HttpGet]
         public IActionResult Create()
@@ -127,14 +212,33 @@ namespace LibraryManagement.Controllers
             {
                 return View(book);
             }
-            /*if (!_validation.IsValidTitle(book.Title))
+            /*var query = from x in _context.Books
+                        where x.Title == book.Title
+                        && x.Publication == book.Publication
+                        select x;
+            if (query != null)
             {
-                ModelState.AddModelError("Title", "Max Length of title must me 5");
                 return View(book);
             }*/
-            _bookService.Add(book);
+            var query = from x in _context.Books
+                        where x.Title == book.Title
+                       // && x.Publication == book.Publication
+                        select x;
+            if(query.Count() == 0)
+            {
+                _bookService.Add(book);
+                return RedirectToAction("AddBooks", new { id = book.BookId });
+            }
+            else
+            {
+                int id = query.FirstOrDefault().BookId;
+                Book books = _context.Books.Find(id);
+                books.Quantity = books.Quantity + book.Quantity;
+                _context.SaveChanges();
+                return RedirectToAction("AddBooks", new { id = id });
+            }
 
-            return RedirectToAction("AddBooks", new { id = book.BookId }); ;
+            //return RedirectToAction("AddBooks", new { id = book.BookId });
         }
         [HttpGet]
         public IActionResult Update(int? id)

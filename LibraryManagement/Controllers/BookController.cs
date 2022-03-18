@@ -22,8 +22,7 @@ namespace LibraryManagement.Controllers
         [AllowAnonymous]
         [HttpGet]
         public IActionResult Details(int id, string message = "")
-        {
-            ViewBag.Message = message;
+        {            
             if (User.Identity.IsAuthenticated)
             {
                 var email = User.Identity.Name;
@@ -32,6 +31,15 @@ namespace LibraryManagement.Controllers
                     return RedirectToAction("Details", "Admin", new { id = id });
                 }
             }
+            var query = from x in _context.AllBooks
+                        where id == x.BookId
+                        select x;
+            if (query.ToList().Count() == 0)
+            {
+                message = "No Books Available";
+            }
+            ViewBag.bookList = query.ToList();
+            ViewBag.Message = message;
             var bookData = _context.Books.Find(id);
             return View(bookData);
         }
@@ -92,12 +100,19 @@ namespace LibraryManagement.Controllers
                             select x.Id;
                 issue.StudentId = query.FirstOrDefault();
                 issue.IssueDate = DateTime.Now;
-                
+                //
+                var checkAllBooks = from x in _context.AllBooks
+                                     where issue.BookId == x.BookId
+                                     select x;
+                if (checkAllBooks.ToList().Count() == 0)
+                {
+                    return RedirectToAction("Details", new { id = issue.BookId, message = "No Books Available" });
+                }    
                 // Check if book is available
                 var checkAvailable = from x in _context.AllBooks
                                      where issue.BookId == x.BookId
                                      && x.Status == Status.Available                                     
-                                     select x;
+                                     select x;                
                 if (checkAvailable.ToList().Count() == 0)
                 {
                     return RedirectToAction("Details", new { id = issue.BookId, message = "This Book is already Reserved" });
@@ -124,11 +139,12 @@ namespace LibraryManagement.Controllers
                 var checkMax = from x in _context.Issues
                                where issue.StudentId == x.StudentId
                                select x;
-                if (checkMax.ToList().Count() >= 3)
+                var checkMaxQuery = _context.Settings.FirstOrDefault();
+                if (checkMax.ToList().Count() >= checkMaxQuery.MaximumAllowedBooks)
                 {
                     return RedirectToAction("Details", new { id = issue.BookId, message = "You have reached Maximum number of reserved. Return books to reserve more." });
                 }
-                issue.Status = Status.Reserved;
+                 issue.Status = Status.Reserved;
                 //
                 var queryBooks = from x in _context.AllBooks
                                  where issue.BooksPartialId == checkAvailable.ToList().FirstOrDefault().Id

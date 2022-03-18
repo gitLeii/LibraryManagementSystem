@@ -3,6 +3,17 @@
 @{
     ViewData["Title"] = "Index";
 }
+
+<form asp-action="MaxIssues" method="post">
+    Maximum Allowed Issues: @ViewBag.Settings
+    <div class="form-group col-md-3 d-inline-block"> 
+        <input name="maxReserve" class=" my-2 d-inline-flex" />        
+            
+        <input type="submit" value="Update" class="btn btn-success" />              
+    </div>        
+</form>
+
+
 <h2>Issue Requests</h2>
 
 <table class="table">
